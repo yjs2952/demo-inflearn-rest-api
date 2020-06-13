@@ -106,6 +106,18 @@ public class EventControllerTest {
     @TestDescription("입력 값이 비어있는 경우에 에러가 발생하는 테스트")
     void createEvent_bad_request_empty_input() throws Exception {
         EventDto eventDto = EventDto.builder()
+                .build();
+
+        mockMvc.perform(post("/api/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @TestDescription("입력 값이 잘못된 경우에 에러가 발생하는 테스트")
+    void createEvent_bad_request_wrong_input() throws Exception {
+        EventDto eventDto = EventDto.builder()
                 .name("Spring")
                 .description("REST API Development with Spring")
                 .beginEnrollmentDateTime(LocalDateTime.of(2018, 11, 26, 14, 21))
@@ -121,18 +133,13 @@ public class EventControllerTest {
         mockMvc.perform(post("/api/events")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(eventDto)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @TestDescription("입력 값이 잘못된 경우에 에러가 발생하는 테스트")
-    void createEvent_bad_request_wrong_input() throws Exception {
-        EventDto eventDto = EventDto.builder()
-                .build();
-
-        mockMvc.perform(post("/api/events")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(eventDto)))
-                .andExpect(status().isBadRequest());
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].objectName").exists())
+//                .andExpect(jsonPath("$[0].field").exists())
+                .andExpect(jsonPath("$[0].defaultMessage").exists())
+                .andExpect(jsonPath("$[0].code").exists())
+//                .andExpect(jsonPath("$[0].rejectedValue").exists())
+        ;
     }
 }
