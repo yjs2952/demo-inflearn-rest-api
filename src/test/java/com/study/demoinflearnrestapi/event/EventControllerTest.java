@@ -52,9 +52,6 @@ public class EventControllerTest {
                 .location("강남역 D2 스타텁 팩토리")
                 .build();
 
-//        event.setId(10);
-//        when(eventRepository.save(event)).thenReturn(event);
-
         mockMvc.perform(post("/api/events")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaTypes.HAL_JSON_VALUE)
@@ -64,8 +61,8 @@ public class EventControllerTest {
                 .andExpect(jsonPath("id").exists())
                 .andExpect(header().exists(HttpHeaders.LOCATION))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, "application/hal+json"))
-                .andExpect(jsonPath("id").value(Matchers.not(100)))
-                .andExpect(jsonPath("free").value(Matchers.not(true)))
+                .andExpect(jsonPath("free").value(false))
+                .andExpect(jsonPath( "offline").value(true))
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()))
         ;
     }
