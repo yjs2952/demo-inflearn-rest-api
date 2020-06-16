@@ -1,9 +1,13 @@
 package com.study.demoinflearnrestapi.event;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+// Junit4 의 경우
+// @Runwith(JunitParamsRunner.class)
 class EventTest {
 
     @Test
@@ -31,44 +35,34 @@ class EventTest {
         assertThat(event.getDescription()).isEqualTo(description);
     }
 
-    @Test
-    void testFree() {
+    // Junit4 에서는 JunitParams 의존성을 받아서 사용하면 된다.
+    // @Parameters({"0,0,true", "100,0,false", "0,100,false"})
+    // @Parameters(method = "paramsForTestFree)
+    @ParameterizedTest
+    @CsvSource(value = {"0,0,true", "100,0,false", "0,100,false"})
+    void testFree(int basePrice, int maxPrice, boolean isFree) {
         // given
         Event event = Event.builder()
-                .basePrice(0)
-                .maxPrice(0)
+                .basePrice(basePrice)
+                .maxPrice(maxPrice)
                 .build();
 
         // when
         event.update();
 
         // then
-        assertThat(event.isFree()).isTrue();
-
-        // given
-        event = Event.builder()
-                .basePrice(100)
-                .maxPrice(0)
-                .build();
-
-        // when
-        event.update();
-
-        // then
-        assertThat(event.isFree()).isFalse();
-
-        // given
-        event = Event.builder()
-                .basePrice(0)
-                .maxPrice(100)
-                .build();
-
-        // when
-        event.update();
-
-        // then
-        assertThat(event.isFree()).isFalse();
+        assertThat(event.isFree()).isEqualTo(isFree);
     }
+
+// Junit4 의 경우
+//    private Object[] parametersForTestFree(){
+//        return new Object[] {
+//                new Object()[] {0,0,true},
+//                new Object()[] {100,0,false},
+//                new Object()[] {0,100,false},
+//                new Object()[] {100,200,false}
+//        };
+//    }
     
     @Test
     void testOffline(){
